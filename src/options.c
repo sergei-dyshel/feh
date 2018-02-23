@@ -73,6 +73,7 @@ void init_parse_options(int argc, char **argv)
 	opt.xinerama = 1;
 	opt.xinerama_index = -1;
 #endif				/* HAVE_LIBXINERAMA */
+	opt.xrandr_output = NULL;
 #ifdef HAVE_INOTIFY
 	opt.auto_reload = 1;
 #endif				/* HAVE_INOTIFY */
@@ -427,6 +428,7 @@ static void feh_parse_option_array(int argc, char **argv, int finalrun)
 		{"conversion-timeout" , 1, 0, 245},
 		{"version-sort"  , 0, 0, 246},
 		{"offset"        , 1, 0, 247},
+		{"xrandr-output" , 1, 0, 244},
 #ifdef HAVE_INOTIFY
 		{"auto-reload"   , 0, 0, 248},
 #endif
@@ -818,8 +820,11 @@ static void feh_parse_option_array(int argc, char **argv, int finalrun)
 			opt.offset_flags = XParseGeometry(optarg, &opt.offset_x,
 					&opt.offset_y, (unsigned int *)&discard, (unsigned int *)&discard);
 			break;
-#ifdef HAVE_INOTIFY
 		case 248:
+			opt.xrandr_output = estrdup(optarg);
+			break;
+#ifdef HAVE_INOTIFY
+		case 249:
 			opt.auto_reload = 1;
 			break;
 #endif

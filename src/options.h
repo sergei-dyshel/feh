@@ -104,6 +104,7 @@ struct __fehoptions {
 	char *start_list_at;
 	char *info_cmd;
 	char *index_info;
+	char *xrandr_output;
 
 	int force_aliasing;
 	int thumb_w;
