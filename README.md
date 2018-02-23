@@ -1,3 +1,7 @@
+# Fork
+
+This fork adds `--xrandr-output` argument to specify XRandR output on which to set wallpaper.
+
 # feh
 Imlib2 based image viewer
 ---
