@@ -75,6 +75,7 @@ void init_parse_options(int argc, char **argv)
 	opt.xinerama = 1;
 	opt.xinerama_index = -1;
 #endif				/* HAVE_LIBXINERAMA */
+	opt.xrandr_output = NULL;
 
 	feh_getopt_theme(argc, argv);
 
@@ -415,6 +416,7 @@ static void feh_parse_option_array(int argc, char **argv, int finalrun)
 		{"insecure"      , 0, 0, 240},
 		{"no-recursive"  , 0, 0, 241},
 		{"cache-size"    , 1, 0, 243},
+		{"xrandr-output" , 1, 0, 244},
 		{0, 0, 0, 0}
 	};
 	int optch = 0, cmdx = 0;
@@ -786,6 +788,9 @@ static void feh_parse_option_array(int argc, char **argv, int finalrun)
 				opt.cache_size = 0;
 			if (opt.cache_size > 2048)
 				opt.cache_size = 2048;
+			break;
+		case 244:
+			opt.xrandr_output = estrdup(optarg);
 			break;
 		default:
 			break;
