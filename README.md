@@ -1,3 +1,7 @@
+# Fork
+
+This fork adds `--xrandr-output` argument to specify XRandR output on which to set wallpaper.
+
 [![build status](https://travis-ci.org/derf/feh.svg?branch=master)](https://travis-ci.org/derf/feh)
 
 Feh – Image viewer and Cataloguer
