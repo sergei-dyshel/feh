@@ -428,9 +428,9 @@ static void feh_parse_option_array(int argc, char **argv, int finalrun)
 		{"conversion-timeout" , 1, 0, 245},
 		{"version-sort"  , 0, 0, 246},
 		{"offset"        , 1, 0, 247},
-		{"xrandr-output" , 1, 0, 244},
+		{"xrandr-output" , 1, 0, 248},
 #ifdef HAVE_INOTIFY
-		{"auto-reload"   , 0, 0, 248},
+		{"auto-reload"   , 0, 0, 249},
 #endif
 		{0, 0, 0, 0}
 	};

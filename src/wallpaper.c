@@ -54,7 +54,7 @@ struct XrandrOutputRect {
 	int height;
 };
 
-static struct XrandrOutputRect find_xrandr_output() {
+static struct XrandrOutputRect find_xrandr_output(const char *output) {
   XRRScreenResources *screen;
   int iscres;
   XRROutputInfo *info;
@@ -66,7 +66,7 @@ static struct XrandrOutputRect find_xrandr_output() {
 
     info = XRRGetOutputInfo(disp, screen, screen->outputs[iscres]);
     if (info->connection == RR_Connected &&
-        strcmp(opt.xrandr_output, info->name) == 0) {
+        strcmp(output, info->name) == 0) {
       crtc_info = XRRGetCrtcInfo(disp, screen, info->crtc);
       struct XrandrOutputRect rect = {crtc_info->x, crtc_info->y,
                                       crtc_info->width, crtc_info->height};
@@ -106,7 +106,7 @@ static void feh_wm_load_next(Imlib_Image *im)
 
 	if (wpfile == NULL)
 		wpfile = filelist;
-
+	weprintf("Loading %s", FEH_FILE(wpfile->data)->filename);
 	if (feh_load_image(im, FEH_FILE(wpfile->data)) == 0)
 		eprintf("Unable to load image %s", FEH_FILE(wpfile->data)->filename);
 	if (wpfile->next)
@@ -374,9 +374,13 @@ void feh_wm_set_bg(char *fil, Imlib_Image im, int centered, int scaled,
 			pmap_d1 = XCreatePixmap(disp, root, scr->width, scr->height, depth);
 
 			if (opt.xrandr_output) {
-				struct XrandrOutputRect rect = find_xrandr_output();
-				feh_wm_set_bg_scaled(pmap_d1, im, use_filelist,
-					rect.x, rect.y, rect.width, rect.height);
+				char *output = strtok(opt.xrandr_output, ",");
+				while (output) {
+					struct XrandrOutputRect rect = find_xrandr_output(output);
+					feh_wm_set_bg_scaled(pmap_d1, im, use_filelist,
+						rect.x, rect.y, rect.width, rect.height);
+					output = strtok(NULL, ",");
+				}
 			}
 			else
 #ifdef HAVE_LIBXINERAMA
@@ -409,12 +413,12 @@ void feh_wm_set_bg(char *fil, Imlib_Image im, int centered, int scaled,
 			gc = XCreateGC(disp, root, GCForeground, &gcval);
 			XFillRectangle(disp, pmap_d1, gc, 0, 0, scr->width, scr->height);
 
-			if (opt.xrandr_output) {
-				struct XrandrOutputRect rect = find_xrandr_output();
-				feh_wm_set_bg_centered(pmap_d1, im, use_filelist,
-					rect.x, rect.y, rect.width, rect.height);
-			}
-			else
+			// if (opt.xrandr_output) {
+			// 	struct XrandrOutputRect rect = find_xrandr_output();
+			// 	feh_wm_set_bg_centered(pmap_d1, im, use_filelist,
+			// 		rect.x, rect.y, rect.width, rect.height);
+			// }
+			// else
 #ifdef HAVE_LIBXINERAMA
 			if (opt.xinerama && xinerama_screens) {
 				for (i = 0; i < num_xinerama_screens; i++) {
@@ -437,11 +441,15 @@ void feh_wm_set_bg(char *fil, Imlib_Image im, int centered, int scaled,
 			pmap_d1 = XCreatePixmap(disp, root, scr->width, scr->height, depth);
 
 			if (opt.xrandr_output) {
-				struct XrandrOutputRect rect = find_xrandr_output();
-				feh_wm_set_bg_filled(pmap_d1, im, use_filelist,
-					rect.x, rect.y, rect.width, rect.height);
+				char *output = strtok(opt.xrandr_output, ",");
+				while (output) {
+					struct XrandrOutputRect rect = find_xrandr_output(output);
+					feh_wm_set_bg_scaled(pmap_d1, im, use_filelist,
+						rect.x, rect.y, rect.width, rect.height);
+					output = strtok(NULL, ",");
+				}
 			}
-			else
+			else {
 #ifdef HAVE_LIBXINERAMA
 			if (opt.xinerama_index >= 0) {
 				gcval.foreground = color.pixel;
@@ -463,6 +471,7 @@ void feh_wm_set_bg(char *fil, Imlib_Image im, int centered, int scaled,
 #endif				/* HAVE_LIBXINERAMA */
 				feh_wm_set_bg_filled(pmap_d1, im, use_filelist
 					, 0, 0, scr->width, scr->height);
+			}
 
 		} else if (filled == 2) {
 
@@ -471,12 +480,6 @@ void feh_wm_set_bg(char *fil, Imlib_Image im, int centered, int scaled,
 			gc = XCreateGC(disp, root, GCForeground, &gcval);
 			XFillRectangle(disp, pmap_d1, gc, 0, 0, scr->width, scr->height);
 
-			if (opt.xrandr_output) {
-				struct XrandrOutputRect rect = find_xrandr_output();
-				feh_wm_set_bg_maxed(pmap_d1, im, use_filelist,
-					rect.x, rect.y, rect.width, rect.height);
-			}
-			else
 #ifdef HAVE_LIBXINERAMA
 			if (opt.xinerama && xinerama_screens) {
 				for (i = 0; i < num_xinerama_screens; i++) {
